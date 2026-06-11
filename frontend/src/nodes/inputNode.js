@@ -1,7 +1,8 @@
 // inputNode.js
 
 import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Position } from 'reactflow';
+import { CustomHandle } from './CustomHandle';
 
 export const InputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.inputName || '');
@@ -34,11 +35,11 @@ export const InputNode = ({ id, data }) => {
           />
         </label>
       </div>
-      <Handle
+      <CustomHandle
         type="source"
         position={Position.Right}
         id={`${id}-value`}
-        className="custom-handle"
+        nodeId={id}
       />
     </div>
   );

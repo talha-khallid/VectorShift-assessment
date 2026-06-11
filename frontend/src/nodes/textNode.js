@@ -1,20 +1,12 @@
 // textNode.js
 
 import { useState, useRef, useEffect } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Position } from 'reactflow';
+import { CustomHandle } from './CustomHandle';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '');
-  const [variables, setVariables] = useState([]);
   const textareaRef = useRef(null);
-
-  // Parse variables from text
-  useEffect(() => {
-    const regex = /\{\{([\w\s]+)\}\}/g;
-    const matches = [...currText.matchAll(regex)];
-    const vars = matches.map(m => m[1].trim()).filter((v, i, a) => a.indexOf(v) === i); // unique variables
-    setVariables(vars);
-  }, [currText]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -50,26 +42,18 @@ export const TextNode = ({ id, data }) => {
         </label>
       </div>
 
-      {variables.map((variable, index) => {
-        // Calculate the top position dynamically to distribute handles evenly
-        const topPosition = variables.length === 1 ? 50 : 20 + (60 / (variables.length - 1)) * index;
-        return (
-          <Handle
-            key={`${id}-${variable}`}
-            type="target"
-            position={Position.Left}
-            id={`${id}-${variable}`}
-            style={{ top: `${topPosition}%` }}
-            className="custom-handle"
-          />
-        );
-      })}
+      <CustomHandle
+        type="target"
+        position={Position.Left}
+        id={`${id}-input`}
+        nodeId={id}
+      />
 
-      <Handle
+      <CustomHandle
         type="source"
         position={Position.Right}
         id={`${id}-output`}
-        className="custom-handle"
+        nodeId={id}
       />
     </div>
   );

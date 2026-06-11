@@ -15,6 +15,14 @@ export const useStore = create((set, get) => ({
     isLocked: false,
     past: [],
     future: [],
+    quickAddMenu: null,
+
+    setQuickAddMenu: (menu) => set({ quickAddMenu: menu }),
+
+    removeEdge: (edgeId) => {
+        get().saveHistory();
+        set(state => ({ edges: state.edges.filter(e => e.id !== edgeId) }));
+    },
 
     saveHistory: () => {
         set(state => {

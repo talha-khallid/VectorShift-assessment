@@ -1,6 +1,7 @@
 // llmNode.js
 
-import { Handle, Position } from 'reactflow';
+import { Position } from 'reactflow';
+import { CustomHandle } from './CustomHandle';
 
 export const LLMNode = ({ id, data }) => {
 
@@ -17,25 +18,17 @@ export const LLMNode = ({ id, data }) => {
       </div>
       <div className="custom-node-body nodrag" style={{ minHeight: '40px' }}>
       </div>
-      <Handle
+      <CustomHandle
         type="target"
         position={Position.Left}
-        id={`${id}-system`}
-        style={{top: `${100/3}%`}}
-        className="custom-handle"
+        id={`${id}-input`}
+        nodeId={id}
       />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-prompt`}
-        style={{top: `${200/3}%`}}
-        className="custom-handle"
-      />
-      <Handle
+      <CustomHandle
         type="source"
         position={Position.Right}
         id={`${id}-response`}
-        className="custom-handle"
+        nodeId={id}
       />
     </div>
   );
