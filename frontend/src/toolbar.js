@@ -1,6 +1,6 @@
 // toolbar.js
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { useReactFlow, useViewport } from 'reactflow';
@@ -19,6 +19,9 @@ const selector = (state) => ({
 
 export const PipelineToolbar = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const popupRef = useRef(null);
+    const btnRef = useRef(null);
+
     const { 
         getNodeID, 
         addNode, 
@@ -37,6 +40,27 @@ export const PipelineToolbar = () => {
     // ReactFlow defaults: minZoom 0.5, maxZoom 2
     const canZoomIn = zoom < 2;
     const canZoomOut = zoom > 0.5;
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                popupRef.current && !popupRef.current.contains(event.target) &&
+                btnRef.current && !btnRef.current.contains(event.target)
+            ) {
+                setIsPopupOpen(false);
+            }
+        };
+
+        if (isPopupOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isPopupOpen]);
 
     const createNode = (type) => {
         setIsPopupOpen(false);
@@ -61,6 +85,7 @@ export const PipelineToolbar = () => {
     return (
         <div className="toolbar-container">
             <button 
+                ref={btnRef}
                 className="toolbar-btn primary" 
                 onClick={() => setIsPopupOpen(!isPopupOpen)}
             >
@@ -71,11 +96,42 @@ export const PipelineToolbar = () => {
             </button>
 
             {isPopupOpen && (
-                <div className="toolbar-popup vertical">
-                    <button className="toolbar-popup-btn" onClick={() => createNode('customInput')}>Input</button>
-                    <button className="toolbar-popup-btn" onClick={() => createNode('llm')}>LLM</button>
-                    <button className="toolbar-popup-btn" onClick={() => createNode('customOutput')}>Output</button>
-                    <button className="toolbar-popup-btn" onClick={() => createNode('text')}>Text</button>
+                <div className="toolbar-popup vertical" ref={popupRef}>
+                    <button className="toolbar-popup-btn" onClick={() => createNode('customInput')}>
+                        <span>Input</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </button>
+                    <button className="toolbar-popup-btn" onClick={() => createNode('llm')}>
+                        <span>LLM</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        </svg>
+                    </button>
+                    <button className="toolbar-popup-btn" onClick={() => createNode('customOutput')}>
+                        <span>Output</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </button>
+                    <button className="toolbar-popup-btn" onClick={() => createNode('text')}>
+                        <span>Text</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                            <line x1="9" y1="20" x2="15" y2="20"></line>
+                            <line x1="12" y1="4" x2="12" y2="20"></line>
+                        </svg>
+                    </button>
                 </div>
             )}
 

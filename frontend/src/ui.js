@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 import { useState, useRef, useCallback } from 'react';
-import ReactFlow, { Background, MiniMap } from 'reactflow';
+import ReactFlow, { Background } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { InputNode } from './nodes/inputNode';
@@ -116,23 +116,6 @@ export const PipelineUI = () => {
                 elementsSelectable={!isLocked}
             >
                 <Background color="#aaa" gap={gridSize} />
-                <MiniMap 
-                  style={{
-                    backgroundColor: '#fff',
-                    borderRadius: '16px',
-                    border: '1px solid #e5e7eb',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                    bottom: '24px',
-                    right: '24px',
-                    width: '200px',
-                    height: '140px'
-                  }}
-                  nodeStrokeColor="#1a1a1a"
-                  nodeColor="#e5e7eb"
-                  nodeBorderRadius={8}
-                  zoomable
-                  pannable
-                />
             </ReactFlow>
         </div>
         </>
