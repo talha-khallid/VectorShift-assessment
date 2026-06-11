@@ -42,7 +42,7 @@ export const CustomHandle = ({ type, position, id, nodeId, style }) => {
             type={type}
             position={position}
             id={id}
-            className="custom-handle"
+            className={`custom-handle ${isConnected ? 'connected' : 'unconnected'}`}
             style={style}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
