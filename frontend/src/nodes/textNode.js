@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 
 export const TextNode = ({ id, data }) => {
-  const [currText, setCurrText] = useState(data?.text || '{{input}}');
+  const [currText, setCurrText] = useState(data?.text || '');
   const [variables, setVariables] = useState([]);
   const textareaRef = useRef(null);
 

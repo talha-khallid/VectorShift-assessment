@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
 export const InputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
+  const [currName, setCurrName] = useState(data?.inputName || '');
 
   const handleNameChange = (e) => {
     setCurrName(e.target.value);

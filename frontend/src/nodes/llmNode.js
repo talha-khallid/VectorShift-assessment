@@ -15,8 +15,7 @@ export const LLMNode = ({ id, data }) => {
         </svg>
         <span>LLM</span>
       </div>
-      <div className="custom-node-body nodrag">
-        <span style={{ fontSize: '14px', color: '#374151' }}>This is a LLM.</span>
+      <div className="custom-node-body nodrag" style={{ minHeight: '40px' }}>
       </div>
       <Handle
         type="target"
