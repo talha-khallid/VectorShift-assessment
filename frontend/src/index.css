@@ -179,6 +179,7 @@ code {
     border-radius: 20px;
     width: 300px;
     box-sizing: border-box;
+    padding: 1px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: #1a1a1a;
 }
@@ -233,61 +234,60 @@ code {
 
 /* Custom Handles */
 .react-flow__handle.custom-handle {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 2px solid #d1d5db;
+    background: white;
     cursor: crosshair;
     z-index: 10;
-    transition: all 0.2s;
-    border: none;
-    background: transparent;
+    transition: opacity 0.2s, background-color 0.2s;
+    position: absolute;
 }
 
 /* Connected Handle */
 .react-flow__handle.custom-handle.connected {
-    width: 22px;
-    height: 22px;
     opacity: 1;
     pointer-events: all;
+    background: white;
+    border-color: #9ca3af;
 }
 .react-flow__handle-left.custom-handle.connected {
-    left: -14px !important;
+    left: -36px !important;
 }
 .react-flow__handle-right.custom-handle.connected {
-    right: -14px !important;
+    right: -36px !important;
 }
 
-/* Unconnected Handle: Gray circle with + further outside */
+/* Unconnected Handle */
 .react-flow__handle.custom-handle.unconnected {
-    width: 22px;
-    height: 22px;
-    background-color: #e5e7eb;
     opacity: 0;
     pointer-events: all;
+    background: white;
+    border-color: #d1d5db;
 }
 .react-flow__handle-left.custom-handle.unconnected {
-    left: -14px !important;
+    left: -36px !important;
 }
 .react-flow__handle-right.custom-handle.unconnected {
-    right: -14px !important;
+    right: -36px !important;
 }
 
 /* Hover Zones - Left and Right */
 .hover-zone-left {
     position: absolute;
-    top: -20px;
-    bottom: -20px;
-    left: -40px;
+    top: -24px;
+    bottom: -24px;
+    left: -48px;
     width: 50%;
     z-index: 0;
 }
 
 .hover-zone-right {
     position: absolute;
-    top: -20px;
-    bottom: -20px;
-    right: -40px;
+    top: -24px;
+    bottom: -24px;
+    right: -48px;
     width: 50%;
     z-index: 0;
 }
@@ -303,19 +303,22 @@ code {
     opacity: 1;
 }
 
-/* Handle Icon */
+/* Handle Icon — absolute centered in circle */
 .handle-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 16px;
-    font-weight: 600;
-    color: #4b5563;
+    font-weight: 700;
+    color: #6b7280;
     line-height: 1;
-    margin-top: -1px;
-    pointer-events: none; /* Crucial to allow dragging */
+    pointer-events: none;
+    user-select: none;
 }
 
 .react-flow__handle.custom-handle.connected .handle-icon {
-    color: #4b5563;
-    opacity: 0; /* Hide x by default */
+    opacity: 0;
     font-size: 14px;
 }
 
@@ -324,8 +327,14 @@ code {
     opacity: 1;
 }
 
+.react-flow__handle.custom-handle.connected:hover {
+    border-color: #9ca3af;
+    background: #f3f4f6;
+}
+
 .react-flow__handle.custom-handle.unconnected:hover {
-    background-color: #d1d5db;
+    background: #f3f4f6;
+    border-color: #9ca3af;
 }
 
 /* Always show handles when drawing an edge */
