@@ -25,7 +25,7 @@ export const OutputNode = ({ id, data }) => {
         </svg>
         <span>Output</span>
       </div>
-      <div className="custom-node-body">
+      <div className="custom-node-body nodrag">
         <label className="custom-node-label">
           Name
           <input 

@@ -37,7 +37,7 @@ export const TextNode = ({ id, data }) => {
         </svg>
         <span>Text Input</span>
       </div>
-      <div className="custom-node-body">
+      <div className="custom-node-body nodrag">
         <label className="custom-node-label">
           Describe the requirements
           <textarea 

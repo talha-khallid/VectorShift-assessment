@@ -5,14 +5,9 @@ import { Handle, Position } from 'reactflow';
 
 export const InputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
-  const [inputType, setInputType] = useState(data.inputType || 'Text');
 
   const handleNameChange = (e) => {
     setCurrName(e.target.value);
-  };
-
-  const handleTypeChange = (e) => {
-    setInputType(e.target.value);
   };
 
   return (
@@ -27,7 +22,7 @@ export const InputNode = ({ id, data }) => {
         </svg>
         <span>Input</span>
       </div>
-      <div className="custom-node-body">
+      <div className="custom-node-body nodrag">
         <label className="custom-node-label">
           Field Name
           <input 
@@ -37,13 +32,6 @@ export const InputNode = ({ id, data }) => {
             className="custom-node-input"
             style={{ marginTop: '6px' }}
           />
-        </label>
-        <label className="custom-node-label">
-          Type
-          <select value={inputType} onChange={handleTypeChange} className="custom-node-select" style={{ marginTop: '6px' }}>
-            <option value="Text">Text</option>
-            <option value="File">File</option>
-          </select>
         </label>
       </div>
       <Handle
