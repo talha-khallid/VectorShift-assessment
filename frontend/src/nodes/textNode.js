@@ -6,6 +6,7 @@ import { CustomHandle } from './CustomHandle';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '');
+  const [hoverZone, setHoverZone] = useState(null);
   const textareaRef = useRef(null);
 
   // Auto-resize textarea
@@ -20,8 +21,22 @@ export const TextNode = ({ id, data }) => {
     setCurrText(e.target.value);
   };
 
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width / 2) {
+      setHoverZone('left');
+    } else {
+      setHoverZone('right');
+    }
+  };
+
   return (
-    <div className="custom-node">
+    <div 
+      className={`custom-node ${hoverZone ? `hover-${hoverZone}` : ''}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setHoverZone(null)}
+    >
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

@@ -10,7 +10,6 @@ const selector = (state) => ({
 });
 
 export const CustomHandle = ({ type, position, id, nodeId, style }) => {
-    const [isHovered, setIsHovered] = useState(false);
     const { edges, removeEdge, setQuickAddMenu } = useStore(selector, shallow);
     
     // Check if this handle is connected
@@ -22,7 +21,7 @@ export const CustomHandle = ({ type, position, id, nodeId, style }) => {
     const isConnected = !!connectedEdge;
 
     const handleClick = (e) => {
-        e.stopPropagation();
+        // e.stopPropagation() breaks React Flow dragging! Do not stop propagation.
         if (isConnected) {
             removeEdge(connectedEdge.id);
         } else {
@@ -44,14 +43,11 @@ export const CustomHandle = ({ type, position, id, nodeId, style }) => {
             id={id}
             className={`custom-handle ${isConnected ? 'connected' : 'unconnected'}`}
             style={style}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             onClick={handleClick}
         >
-            {isHovered && isConnected && (
+            {isConnected ? (
                 <span className="handle-icon">×</span>
-            )}
-            {isHovered && !isConnected && (
+            ) : (
                 <span className="handle-icon">+</span>
             )}
         </Handle>
