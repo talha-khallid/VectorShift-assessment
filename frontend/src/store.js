@@ -100,7 +100,7 @@ export const useStore = create((set, get) => ({
     onConnect: (connection) => {
         get().saveHistory();
         set({
-            edges: addEdge({...connection, type: 'default', animated: false}, get().edges),
+            edges: addEdge({...connection, type: 'floating', animated: false}, get().edges),
         });
     },
     updateNodeField: (nodeId, fieldName, fieldValue) => {

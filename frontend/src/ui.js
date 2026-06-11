@@ -10,6 +10,8 @@ import { InputNode } from './nodes/inputNode';
 import { LLMNode } from './nodes/llmNode';
 import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
+import FloatingEdge from './FloatingEdge';
+import FloatingConnectionLine from './FloatingConnectionLine';
 
 import 'reactflow/dist/style.css';
 
@@ -20,6 +22,9 @@ const nodeTypes = {
   llm: LLMNode,
   customOutput: OutputNode,
   text: TextNode,
+};
+const edgeTypes = {
+  floating: FloatingEdge,
 };
 
 const selector = (state) => ({
@@ -187,12 +192,15 @@ export const PipelineUI = () => {
                 onNodeDragStop={onNodeDragStop}
                 onInit={setReactFlowInstance}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                connectionLineComponent={FloatingConnectionLine}
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
-                connectionLineType='default'
+                connectionLineType="smoothstep"
                 nodesDraggable={!isLocked}
                 nodesConnectable={!isLocked}
                 elementsSelectable={!isLocked}
+                fitView
             >
                 <Background color="#aaa" gap={gridSize} />
             </ReactFlow>
