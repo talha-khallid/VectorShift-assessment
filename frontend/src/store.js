@@ -2,32 +2,20 @@
 
 import { create } from "zustand";
 import {
-    addEdge,
     applyNodeChanges,
-    applyEdgeChanges,
-    MarkerType,
 } from 'reactflow';
 
 export const useStore = create((set, get) => ({
     nodes: [],
-    edges: [],
     nodeIDs: {},
     isLocked: false,
     past: [],
     future: [],
-    quickAddMenu: null,
-
-    setQuickAddMenu: (menu) => set({ quickAddMenu: menu }),
-
-    removeEdge: (edgeId) => {
-        get().saveHistory();
-        set(state => ({ edges: state.edges.filter(e => e.id !== edgeId) }));
-    },
 
     saveHistory: () => {
         set(state => {
-            const newPast = [...state.past, { nodes: state.nodes, edges: state.edges }];
-            if (newPast.length > 50) newPast.shift(); // keep last 50 states
+            const newPast = [...state.past, { nodes: state.nodes }];
+            if (newPast.length > 50) newPast.shift();
             return { past: newPast, future: [] };
         });
     },
@@ -39,9 +27,8 @@ export const useStore = create((set, get) => ({
             const newPast = state.past.slice(0, state.past.length - 1);
             return {
                 past: newPast,
-                future: [{ nodes: state.nodes, edges: state.edges }, ...state.future],
+                future: [{ nodes: state.nodes }, ...state.future],
                 nodes: previous.nodes,
-                edges: previous.edges
             };
         });
     },
@@ -52,10 +39,9 @@ export const useStore = create((set, get) => ({
             const next = state.future[0];
             const newFuture = state.future.slice(1);
             return {
-                past: [...state.past, { nodes: state.nodes, edges: state.edges }],
+                past: [...state.past, { nodes: state.nodes }],
                 future: newFuture,
                 nodes: next.nodes,
-                edges: next.edges
             };
         });
     },
@@ -86,21 +72,6 @@ export const useStore = create((set, get) => ({
         }
         set({
             nodes: applyNodeChanges(changes, get().nodes),
-        });
-    },
-    onEdgesChange: (changes) => {
-        const hasRemove = changes.some(c => c.type === 'remove');
-        if (hasRemove) {
-            get().saveHistory();
-        }
-        set({
-            edges: applyEdgeChanges(changes, get().edges),
-        });
-    },
-    onConnect: (connection) => {
-        get().saveHistory();
-        set({
-            edges: addEdge({...connection, type: 'floating', animated: false}, get().edges),
         });
     },
     updateNodeField: (nodeId, fieldName, fieldValue) => {

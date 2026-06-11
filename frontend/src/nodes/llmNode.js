@@ -1,15 +1,11 @@
 // llmNode.js
 
 import { useState } from 'react';
-import { Position } from 'reactflow';
-import { CustomHandle } from './CustomHandle';
 
 export const LLMNode = ({ id, data }) => {
 
   return (
     <div className="custom-node">
-      <div className="hover-zone-left"></div>
-      <div className="hover-zone-right"></div>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
@@ -21,18 +17,6 @@ export const LLMNode = ({ id, data }) => {
       </div>
       <div className="custom-node-body nodrag" style={{ minHeight: '40px' }}>
       </div>
-      <CustomHandle
-        type="target"
-        position={Position.Left}
-        id={`${id}-input`}
-        nodeId={id}
-      />
-      <CustomHandle
-        type="source"
-        position={Position.Right}
-        id={`${id}-response`}
-        nodeId={id}
-      />
     </div>
   );
 }

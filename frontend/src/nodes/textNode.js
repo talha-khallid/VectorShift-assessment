@@ -1,8 +1,6 @@
 // textNode.js
 
 import { useState, useRef, useEffect } from 'react';
-import { Position } from 'reactflow';
-import { CustomHandle } from './CustomHandle';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '');
@@ -22,8 +20,6 @@ export const TextNode = ({ id, data }) => {
 
   return (
     <div className="custom-node">
-      <div className="hover-zone-left"></div>
-      <div className="hover-zone-right"></div>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -43,20 +39,6 @@ export const TextNode = ({ id, data }) => {
           />
         </label>
       </div>
-
-      <CustomHandle
-        type="target"
-        position={Position.Left}
-        id={`${id}-input`}
-        nodeId={id}
-      />
-
-      <CustomHandle
-        type="source"
-        position={Position.Right}
-        id={`${id}-output`}
-        nodeId={id}
-      />
     </div>
   );
 }
