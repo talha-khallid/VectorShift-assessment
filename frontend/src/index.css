@@ -32,7 +32,6 @@ code {
 .toolbar-btn {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     justify-content: center;
     background: none;
     border: none;
@@ -99,7 +98,6 @@ code {
 .toolbar-single-btn {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     justify-content: center;
     background: none;
     border: 1px solid #e5e7eb;
@@ -183,35 +181,24 @@ code {
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: #1a1a1a;
-    border: 2px solid white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 6px solid white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
-.custom-node::before {
-    content: '';
-    position: absolute;
-    top: -24px;
-    left: -24px;
-    right: -24px;
-    bottom: -24px;
-    z-index: -1;
-}
-
-/* Custom Handles */
 .custom-node-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 16px 20px 12px 20px;
+    padding: 14px 16px 10px 16px;
     font-weight: 600;
     font-size: 18px;
 }
 
 .custom-node-body {
     background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 0 8px 8px 8px;
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 6px 6px 6px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -245,76 +232,107 @@ code {
 .custom-node-textarea:focus {
     border-color: #d1d5db;
 }
+
+/* Custom Handles */
 .react-flow__handle.custom-handle {
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: crosshair;
     z-index: 10;
     transition: all 0.2s;
     border: none;
 }
 
+/* Connected Handle: Dark Circle resting on the border */
 .react-flow__handle.custom-handle.connected {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     background-color: #374151;
     opacity: 1;
     pointer-events: all;
 }
+.react-flow__handle-left.custom-handle.connected {
+    left: -11px !important;
+}
+.react-flow__handle-right.custom-handle.connected {
+    right: -11px !important;
+}
 
+/* Unconnected Handle: Gray circle with + further outside */
 .react-flow__handle.custom-handle.unconnected {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     background-color: #e5e7eb;
     opacity: 0;
-    pointer-events: none;
+    pointer-events: all; /* Keep active so user can drag to it! */
+}
+.react-flow__handle-left.custom-handle.unconnected {
+    left: -28px !important;
+}
+.react-flow__handle-right.custom-handle.unconnected {
+    right: -28px !important;
 }
 
-/* Hover logic for left and right handles */
-.custom-node.hover-left .react-flow__handle-left.custom-handle.unconnected,
+/* Hover Zones - Left and Right */
+.hover-zone-left {
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    left: -40px;
+    width: 50%;
+    z-index: 0;
+}
+
+.hover-zone-right {
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    right: -40px;
+    width: 50%;
+    z-index: 0;
+}
+
+/* Show handles when hovering the respective zone */
+.hover-zone-left:hover ~ .react-flow__handle-left.custom-handle.unconnected,
 .react-flow__handle-left.custom-handle.unconnected:hover {
     opacity: 1;
-    pointer-events: all;
 }
 
-.custom-node.hover-right .react-flow__handle-right.custom-handle.unconnected,
+.hover-zone-right:hover ~ .react-flow__handle-right.custom-handle.unconnected,
 .react-flow__handle-right.custom-handle.unconnected:hover {
     opacity: 1;
-    pointer-events: all;
 }
 
-/* Ensure handles stay visible while dragging a connection */
-.react-flow__handle.connecting,
-.react-flow__handle-connecting,
-.react-flow__node-connecting .react-flow__handle {
-    opacity: 1 !important;
-    pointer-events: all !important;
+/* Handle Icon */
+.handle-icon {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4b5563;
+    line-height: 1;
+    margin-top: -1px;
+    pointer-events: none; /* Crucial to allow dragging */
+}
+
+.react-flow__handle.custom-handle.connected .handle-icon {
+    color: white;
+    opacity: 0; /* Hide x by default */
+    font-size: 12px;
+}
+
+/* Show x only when hovering a connected handle */
+.react-flow__handle.custom-handle.connected:hover .handle-icon {
+    opacity: 1;
 }
 
 .react-flow__handle.custom-handle.unconnected:hover {
     background-color: #d1d5db;
 }
 
-.handle-icon {
-    font-size: 14px;
-    font-weight: 600;
-    color: #4b5563;
-    line-height: 1;
-    margin-top: -1px;
-}
-
-.react-flow__handle.custom-handle.connected .handle-icon {
-    color: white;
-}
-
-.react-flow__handle-left.custom-handle {
-    left: -28px !important;
-}
-
-.react-flow__handle-right.custom-handle {
-    right: -28px !important;
+/* Always show handles when drawing an edge */
+.react-flow.connecting .react-flow__handle.custom-handle.unconnected {
+    opacity: 1;
 }
 
 /* Quick Add Menu */

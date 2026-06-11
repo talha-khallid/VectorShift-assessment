@@ -7,7 +7,6 @@ import { CustomHandle } from './CustomHandle';
 export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.outputName || '');
   const [outputType, setOutputType] = useState(data.outputType || 'Text');
-  const [hoverZone, setHoverZone] = useState(null);
 
   const handleNameChange = (e) => {
     setCurrName(e.target.value);
@@ -17,22 +16,10 @@ export const OutputNode = ({ id, data }) => {
     setOutputType(e.target.value);
   };
 
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width / 2) {
-      setHoverZone('left');
-    } else {
-      setHoverZone('right');
-    }
-  };
-
   return (
-    <div 
-      className={`custom-node ${hoverZone ? `hover-${hoverZone}` : ''}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setHoverZone(null)}
-    >
+    <div className="custom-node">
+      <div className="hover-zone-left"></div>
+      <div className="hover-zone-right"></div>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
