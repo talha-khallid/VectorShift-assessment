@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 import { useState, useRef, useCallback } from 'react';
-import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
+import ReactFlow, { Background, MiniMap } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { InputNode } from './nodes/inputNode';
@@ -30,6 +30,7 @@ const selector = (state) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
+  isLocked: state.isLocked,
 });
 
 export const PipelineUI = () => {
@@ -42,7 +43,8 @@ export const PipelineUI = () => {
       addNode,
       onNodesChange,
       onEdgesChange,
-      onConnect
+      onConnect,
+      isLocked
     } = useStore(selector, shallow);
 
     const getInitNodeData = (nodeID, type) => {
@@ -80,7 +82,7 @@ export const PipelineUI = () => {
             addNode(newNode);
           }
         },
-        [reactFlowInstance]
+        [reactFlowInstance, getNodeID, addNode]
     );
 
     const onDragOver = useCallback((event) => {
@@ -88,9 +90,13 @@ export const PipelineUI = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    const onNodeDragStop = useCallback(() => {
+        useStore.getState().saveHistory();
+    }, []);
+
     return (
         <>
-        <div ref={reactFlowWrapper} style={{width: '100wv', height: '70vh'}}>
+        <div ref={reactFlowWrapper} style={{width: '100vw', height: '100vh'}}>
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -99,15 +105,34 @@ export const PipelineUI = () => {
                 onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+                onNodeDragStop={onNodeDragStop}
                 onInit={setReactFlowInstance}
                 nodeTypes={nodeTypes}
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 connectionLineType='smoothstep'
+                nodesDraggable={!isLocked}
+                nodesConnectable={!isLocked}
+                elementsSelectable={!isLocked}
             >
                 <Background color="#aaa" gap={gridSize} />
-                <Controls />
-                <MiniMap />
+                <MiniMap 
+                  style={{
+                    backgroundColor: '#fff',
+                    borderRadius: '16px',
+                    border: '1px solid #e5e7eb',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                    bottom: '24px',
+                    right: '24px',
+                    width: '200px',
+                    height: '140px'
+                  }}
+                  nodeStrokeColor="#1a1a1a"
+                  nodeColor="#e5e7eb"
+                  nodeBorderRadius={8}
+                  zoomable
+                  pannable
+                />
             </ReactFlow>
         </div>
         </>

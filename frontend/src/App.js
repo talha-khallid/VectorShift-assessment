@@ -1,14 +1,15 @@
 import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
-import { SubmitButton } from './submit';
+import { ReactFlowProvider } from 'reactflow';
 
 function App() {
   return (
-    <div>
-      <PipelineToolbar />
-      <PipelineUI />
-      <SubmitButton />
-    </div>
+    <ReactFlowProvider>
+      <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+        <PipelineUI />
+        <PipelineToolbar />
+      </div>
+    </ReactFlowProvider>
   );
 }
 
