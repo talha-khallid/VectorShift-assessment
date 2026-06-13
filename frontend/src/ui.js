@@ -11,6 +11,7 @@ import { LLMNode } from './nodes/llmNode';
 import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
 import FloatingEdge from './FloatingEdge';
+import CustomConnectionLine from './CustomConnectionLine';
 
 import 'reactflow/dist/style.css';
 
@@ -113,6 +114,7 @@ export const PipelineUI = () => {
                 onInit={setReactFlowInstance}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
+                connectionLineComponent={CustomConnectionLine}
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 nodesDraggable={!isLocked}
