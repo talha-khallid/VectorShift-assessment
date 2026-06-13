@@ -1,8 +1,7 @@
 // outputNode.js
 
 import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
-import { useStore } from '../store';
+import { BaseNode } from './BaseNode';
 
 export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.outputName || '');
@@ -16,16 +15,8 @@ export const OutputNode = ({ id, data }) => {
     setOutputType(e.target.value);
   };
 
-  const disconnectNodeEdges = useStore(state => state.disconnectNodeEdges);
-
-  const handleDisconnect = (e) => {
-    e.stopPropagation();
-    disconnectNodeEdges(id);
-  };
-
   return (
-    <div className="custom-node">
-      <Handle type="target" position={Position.Left} className="hidden-handle" isConnectable={true} />
+    <BaseNode id={id}>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -53,13 +44,6 @@ export const OutputNode = ({ id, data }) => {
           </select>
         </label>
       </div>
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        className="add-handle" 
-        onClick={handleDisconnect}
-        isConnectable={true}
-      />
-    </div>
+    </BaseNode>
   );
 }

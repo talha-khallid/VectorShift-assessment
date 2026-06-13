@@ -1,8 +1,7 @@
 // textNode.js
 
 import { useState, useRef, useEffect } from 'react';
-import { Handle, Position } from 'reactflow';
-import { useStore } from '../store';
+import { BaseNode } from './BaseNode';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '');
@@ -20,16 +19,8 @@ export const TextNode = ({ id, data }) => {
     setCurrText(e.target.value);
   };
 
-  const disconnectNodeEdges = useStore(state => state.disconnectNodeEdges);
-
-  const handleDisconnect = (e) => {
-    e.stopPropagation();
-    disconnectNodeEdges(id);
-  };
-
   return (
-    <div className="custom-node">
-      <Handle type="target" position={Position.Left} className="hidden-handle" isConnectable={true} />
+    <BaseNode id={id}>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -49,13 +40,6 @@ export const TextNode = ({ id, data }) => {
           />
         </label>
       </div>
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        className="add-handle" 
-        onClick={handleDisconnect}
-        isConnectable={true}
-      />
-    </div>
+    </BaseNode>
   );
 }
