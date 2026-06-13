@@ -69,8 +69,8 @@ export const PipelineToolbar = () => {
         // Calculate center of screen and project to flow coordinates, add offset based on nodes count
         const offset = (nodesCount % 10) * 20; // reset offset every 10 nodes to avoid going offscreen
         const position = project({
-            x: window.innerWidth / 2 - 50 + offset,
-            y: window.innerHeight / 2 - 50 + offset,
+            x: window.innerWidth / 2 - 125 + offset,
+            y: window.innerHeight / 2 - 100 + offset,
         });
 
         const newNode = {
@@ -88,6 +88,7 @@ export const PipelineToolbar = () => {
                 ref={btnRef}
                 className="toolbar-btn primary" 
                 onClick={() => setIsPopupOpen(!isPopupOpen)}
+                title="Add Node"
             >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -97,6 +98,15 @@ export const PipelineToolbar = () => {
 
             {isPopupOpen && (
                 <div className="toolbar-popup vertical" ref={popupRef}>
+                    <button className="toolbar-popup-btn" onClick={() => createNode('customInput')}>
+                        <span>Input</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </button>
                     <button className="toolbar-popup-btn" onClick={() => createNode('llm')}>
                         <span>LLM</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -188,7 +198,7 @@ export const PipelineToolbar = () => {
             <button 
                 className={`toolbar-single-btn ${isLocked ? 'active' : ''}`} 
                 onClick={toggleLock}
-                title={isLocked ? "Unlock" : "Lock"}
+                title={isLocked ? "Unlock Canvas" : "Lock Canvas"}
             >
                 {isLocked ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

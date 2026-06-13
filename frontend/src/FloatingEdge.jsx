@@ -1,21 +1,38 @@
-import React, { useCallback } from 'react';
-import { getBezierPath, EdgeLabelRenderer, useStore } from 'reactflow';
-import { getEdgeParams } from './utils.js';
+import React from 'react';
+import { getBezierPath } from 'reactflow';
+import { useStore } from './store';
 
-export default function FloatingEdge({ id, source, target, markerEnd, style, data }) {
-  const sourceNode = useStore(useCallback((s) => s.nodeInternals.get(source), [source]));
-  const targetNode = useStore(useCallback((s) => s.nodeInternals.get(target), [target]));
-
-  if (!sourceNode || !targetNode) return null;
-
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
-
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX: sx, sourceY: sy,
-    targetX: tx, targetY: ty,
-    sourcePosition: sourcePos,
-    targetPosition: targetPos,
+export default function FloatingEdge({
+  id,
+  source,
+  target,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  markerEnd,
+  style,
+  data,
+}) {
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
   });
+
+  const deleteEdge = useStore((s) => s.deleteEdge);
+  const sourceNode = useStore((s) => s.nodes.find((n) => n.id === source));
+  const targetNode = useStore((s) => s.nodes.find((n) => n.id === target));
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    deleteEdge(id);
+  };
 
   const dashed = sourceNode?.type === 'audio' || targetNode?.type === 'audio' || data?.dashed;
   const strokeColor = style?.stroke || '#ccc';
@@ -27,12 +44,51 @@ export default function FloatingEdge({ id, source, target, markerEnd, style, dat
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
-        style={{ stroke: strokeColor, strokeWidth: 4, strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' }}
+        style={{
+          stroke: strokeColor,
+          strokeWidth: 4,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          fill: 'none',
+        }}
         strokeDasharray={dashed ? '12 12' : undefined}
       />
-      {/* End circles that look like connected node handles */}
-      <circle cx={sx} cy={sy} r={6} fill="#fff" stroke={strokeColor} strokeWidth={4} />
-      <circle cx={tx} cy={ty} r={6} fill="#fff" stroke={strokeColor} strokeWidth={4} />
+      {/* Circle at the start of the connection */}
+      <g className="edge-handle-group" onClick={handleDelete}>
+        <circle
+          cx={sourceX}
+          cy={sourceY}
+          r={6}
+          className="edge-handle-circle"
+          fill="#fff"
+          stroke={strokeColor}
+          strokeWidth={4}
+        />
+        <circle
+          cx={sourceX}
+          cy={sourceY}
+          r={15}
+          fill="transparent"
+        />
+      </g>
+      {/* Circle at the end of the connection */}
+      <g className="edge-handle-group" onClick={handleDelete}>
+        <circle
+          cx={targetX}
+          cy={targetY}
+          r={6}
+          className="edge-handle-circle"
+          fill="#fff"
+          stroke={strokeColor}
+          strokeWidth={4}
+        />
+        <circle
+          cx={targetX}
+          cy={targetY}
+          r={15}
+          fill="transparent"
+        />
+      </g>
     </>
   );
 }

@@ -1,5 +1,3 @@
-// store.js
-
 import { create } from "zustand";
 import {
     applyNodeChanges,
@@ -64,12 +62,14 @@ export const useStore = create((set, get) => ({
         set({nodeIDs: newIDs});
         return `${type}-${newIDs[type]}`;
     },
+
     addNode: (node) => {
         get().saveHistory();
         set({
             nodes: [...get().nodes, node]
         });
     },
+
     onNodesChange: (changes) => {
         const hasRemove = changes.some(c => c.type === 'remove');
         if (hasRemove) {
@@ -79,17 +79,25 @@ export const useStore = create((set, get) => ({
             nodes: applyNodeChanges(changes, get().nodes),
         });
     },
+
     updateNodeField: (nodeId, fieldName, fieldValue) => {
         get().saveHistory();
         set({
             nodes: get().nodes.map((node) => {
                 if (node.id === nodeId) {
-                    node.data = { ...node.data, [fieldName]: fieldValue };
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            [fieldName]: fieldValue,
+                        },
+                    };
                 }
                 return node;
             }),
         });
     },
+
     onEdgesChange: (changes) => {
         const hasRemove = changes.some(c => c.type === 'remove');
         if (hasRemove) {
@@ -99,16 +107,25 @@ export const useStore = create((set, get) => ({
             edges: applyEdgeChanges(changes, get().edges),
         });
     },
+
     onConnect: (connection) => {
         get().saveHistory();
         set({
             edges: addEdge({ ...connection, type: 'floating' }, get().edges),
         });
     },
+
     disconnectNodeEdges: (nodeId) => {
         get().saveHistory();
         set({
             edges: get().edges.filter(e => e.source !== nodeId && e.target !== nodeId),
+        });
+    },
+
+    deleteEdge: (edgeId) => {
+        get().saveHistory();
+        set({
+            edges: get().edges.filter(e => e.id !== edgeId),
         });
     },
 }));

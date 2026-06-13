@@ -1,22 +1,29 @@
-// outputNode.js
-
 import { useState } from 'react';
 import { BaseNode } from './BaseNode';
+import { useStore } from '../store';
+import { Position } from 'reactflow';
 
 export const OutputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.outputName || '');
-  const [outputType, setOutputType] = useState(data.outputType || 'Text');
+  const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
+  const [outputType, setOutputType] = useState(data?.outputType || 'Text');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   const handleNameChange = (e) => {
-    setCurrName(e.target.value);
+    const value = e.target.value;
+    setCurrName(value);
+    updateNodeField(id, 'outputName', value);
   };
 
   const handleTypeChange = (e) => {
-    setOutputType(e.target.value);
+    const value = e.target.value;
+    setOutputType(value);
+    updateNodeField(id, 'outputType', value);
   };
 
+  const inputs = [{ id: 'value', position: Position.Left }];
+
   return (
-    <BaseNode id={id}>
+    <BaseNode id={id} inputs={inputs}>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -36,7 +43,7 @@ export const OutputNode = ({ id, data }) => {
             style={{ marginTop: '6px' }}
           />
         </label>
-        <label className="custom-node-label">
+        <label className="custom-node-label" style={{ marginTop: '8px', display: 'block' }}>
           Type
           <select value={outputType} onChange={handleTypeChange} className="custom-node-select" style={{ marginTop: '6px' }}>
             <option value="Text">Text</option>
@@ -46,4 +53,4 @@ export const OutputNode = ({ id, data }) => {
       </div>
     </BaseNode>
   );
-}
+};
