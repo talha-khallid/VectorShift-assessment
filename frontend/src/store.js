@@ -3,10 +3,13 @@
 import { create } from "zustand";
 import {
     applyNodeChanges,
+    applyEdgeChanges,
+    addEdge,
 } from 'reactflow';
 
 export const useStore = create((set, get) => ({
     nodes: [],
+    edges: [],
     nodeIDs: {},
     isLocked: false,
     past: [],
@@ -14,7 +17,7 @@ export const useStore = create((set, get) => ({
 
     saveHistory: () => {
         set(state => {
-            const newPast = [...state.past, { nodes: state.nodes }];
+            const newPast = [...state.past, { nodes: state.nodes, edges: state.edges }];
             if (newPast.length > 50) newPast.shift();
             return { past: newPast, future: [] };
         });
@@ -27,8 +30,9 @@ export const useStore = create((set, get) => ({
             const newPast = state.past.slice(0, state.past.length - 1);
             return {
                 past: newPast,
-                future: [{ nodes: state.nodes }, ...state.future],
+                future: [{ nodes: state.nodes, edges: state.edges }, ...state.future],
                 nodes: previous.nodes,
+                edges: previous.edges,
             };
         });
     },
@@ -39,9 +43,10 @@ export const useStore = create((set, get) => ({
             const next = state.future[0];
             const newFuture = state.future.slice(1);
             return {
-                past: [...state.past, { nodes: state.nodes }],
+                past: [...state.past, { nodes: state.nodes, edges: state.edges }],
                 future: newFuture,
                 nodes: next.nodes,
+                edges: next.edges,
             };
         });
     },
@@ -83,6 +88,27 @@ export const useStore = create((set, get) => ({
                 }
                 return node;
             }),
+        });
+    },
+    onEdgesChange: (changes) => {
+        const hasRemove = changes.some(c => c.type === 'remove');
+        if (hasRemove) {
+            get().saveHistory();
+        }
+        set({
+            edges: applyEdgeChanges(changes, get().edges),
+        });
+    },
+    onConnect: (connection) => {
+        get().saveHistory();
+        set({
+            edges: addEdge({ ...connection, type: 'floating' }, get().edges),
+        });
+    },
+    disconnectNodeEdges: (nodeId) => {
+        get().saveHistory();
+        set({
+            edges: get().edges.filter(e => e.source !== nodeId && e.target !== nodeId),
         });
     },
 }));

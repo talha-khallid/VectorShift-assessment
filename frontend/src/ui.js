@@ -10,6 +10,7 @@ import { InputNode } from './nodes/inputNode';
 import { LLMNode } from './nodes/llmNode';
 import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
+import FloatingEdge from './FloatingEdge';
 
 import 'reactflow/dist/style.css';
 
@@ -21,12 +22,18 @@ const nodeTypes = {
   customOutput: OutputNode,
   text: TextNode,
 };
+const edgeTypes = {
+  floating: FloatingEdge,
+};
 
 const selector = (state) => ({
   nodes: state.nodes,
+  edges: state.edges,
   getNodeID: state.getNodeID,
   addNode: state.addNode,
   onNodesChange: state.onNodesChange,
+  onEdgesChange: state.onEdgesChange,
+  onConnect: state.onConnect,
   isLocked: state.isLocked,
 });
 
@@ -35,9 +42,12 @@ export const PipelineUI = () => {
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const {
       nodes,
+      edges,
       getNodeID,
       addNode,
       onNodesChange,
+      onEdgesChange,
+      onConnect,
       isLocked,
     } = useStore(selector, shallow);
 
@@ -93,16 +103,20 @@ export const PipelineUI = () => {
         <div ref={reactFlowWrapper} style={{width: '100vw', height: '100vh'}}>
             <ReactFlow
                 nodes={nodes}
+                edges={edges}
                 onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onNodeDragStop={onNodeDragStop}
                 onInit={setReactFlowInstance}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 nodesDraggable={!isLocked}
-                nodesConnectable={false}
+                nodesConnectable={!isLocked}
                 elementsSelectable={!isLocked}
             >
                 <Background color="#aaa" gap={gridSize} />
