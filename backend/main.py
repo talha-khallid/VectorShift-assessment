@@ -146,24 +146,25 @@ async def execute_pipeline(payload: WorkflowPayload):
     output_node = output_nodes[0]
     
     # 2. Find incoming edge to Output Node to find Final Node (LLM)
-    incoming_to_output = [e for e in edges if e['target'] == output_node['id']]
-    if not incoming_to_output:
+    connected_to_output = [e for e in edges if e['target'] == output_node['id'] or e['source'] == output_node['id']]
+    if not connected_to_output:
         return {"result": "Error: Output node is not connected to anything."}
         
-    final_node_id = incoming_to_output[0]['source']
+    edge_to_output = connected_to_output[0]
+    final_node_id = edge_to_output['source'] if edge_to_output['target'] == output_node['id'] else edge_to_output['target']
     llm_node = next((n for n in nodes if n['id'] == final_node_id), None)
     
     if not llm_node or llm_node['type'] != 'llm':
         return {"result": f"Error: Output must be connected to an LLM node. Found {llm_node['type'] if llm_node else 'None'}"}
         
-    # 3. Find incoming edges to LLM Node in chronological order
-    incoming_to_llm = [e for e in edges if e['target'] == llm_node['id']]
+    # 3. Find edges connected to LLM Node in chronological order
+    connected_to_llm = [e for e in edges if (e['target'] == llm_node['id'] or e['source'] == llm_node['id']) and e['id'] != edge_to_output['id']]
     
-    # 4. Extract texts from source nodes
+    # 4. Extract texts from connected nodes
     texts = []
-    for edge in incoming_to_llm:
-        source_id = edge['source']
-        source_node = next((n for n in nodes if n['id'] == source_id), None)
+    for edge in connected_to_llm:
+        connected_node_id = edge['source'] if edge['target'] == llm_node['id'] else edge['target']
+        source_node = next((n for n in nodes if n['id'] == connected_node_id), None)
         if source_node and source_node['type'] == 'text':
             node_data = source_node.get('data', {})
             text_val = node_data.get('text', '')
