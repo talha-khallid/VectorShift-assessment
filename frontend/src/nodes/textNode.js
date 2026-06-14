@@ -17,10 +17,7 @@ export const TextNode = ({ id, data }) => {
   };
 
   return (
-    <BaseNode id={id} outputs={[{ id: 'output' }]}>
-      <div className="custom-node-header">
-        <span>Input</span>
-      </div>
+    <BaseNode id={id} data={data} defaultTitle="Input">
       <div className="custom-node-body nodrag">
         <textarea 
           ref={textareaRef}

@@ -190,10 +190,119 @@ code {
     border-radius: 20px 20px 0 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
     padding: 10px 10px 6px 12px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
+    position: relative;
+}
+
+.node-menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.tick-btn {
+    color: #10b981;
+}
+
+.tick-btn:hover {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.cross-btn {
+    color: #ef4444;
+}
+
+.cross-btn:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.node-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 4px 0;
+    z-index: 50;
+    min-width: 120px;
+}
+
+.node-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+}
+
+.node-menu-item:hover {
+    background-color: #f3f4f6;
+}
+
+.node-menu-item.delete {
+    color: #ef4444;
+}
+
+.node-menu-item.delete:hover {
+    background-color: #fee2e2;
+}
+
+.node-rename-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.node-rename-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    outline: none;
+    color: #1a1a1a;
+    width: 100%;
+}
+
+.node-rename-input:focus {
+    /* No border on focus */
+}
+
+.node-rename-actions {
+    display: flex;
+    gap: 2px;
 }
 
 .custom-node-body {

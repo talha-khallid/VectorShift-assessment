@@ -30,10 +30,10 @@ export const LLMNode = ({ id, data }) => {
       }
     };
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside, true);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside, true);
     };
   }, [isDropdownOpen]);
 
@@ -42,10 +42,7 @@ export const LLMNode = ({ id, data }) => {
   };
 
   return (
-    <BaseNode id={id}>
-      <div className="custom-node-header">
-        <span>LLM</span>
-      </div>
+    <BaseNode id={id} data={data} defaultTitle="LLM">
       <div className="custom-node-body nodrag">
         <div className="custom-dropdown-container" ref={dropdownRef}>
           <div 

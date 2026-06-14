@@ -22,10 +22,7 @@ export const OutputNode = ({ id, data }) => {
   };
 
   return (
-    <BaseNode id={id} inputs={[{ id: 'input', label: 'value' }]}>
-      <div className="custom-node-header">
-        <span>Output</span>
-      </div>
+    <BaseNode id={id} data={data} defaultTitle="Output">
       <div className="custom-node-body nodrag">
           <input 
             type="text" 

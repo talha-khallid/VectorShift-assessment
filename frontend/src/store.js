@@ -128,4 +128,12 @@ export const useStore = create((set, get) => ({
             edges: get().edges.filter(e => e.id !== edgeId),
         });
     },
+
+    deleteNode: (nodeId) => {
+        get().saveHistory();
+        set({
+            nodes: get().nodes.filter(n => n.id !== nodeId),
+            edges: get().edges.filter(e => e.source !== nodeId && e.target !== nodeId),
+        });
+    },
 }));
