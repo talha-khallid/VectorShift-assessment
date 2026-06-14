@@ -10,30 +10,19 @@ const getOptimalHandles = (nodeA, nodeB) => {
     const wA = nodeA.width || 350; const hA = nodeA.height || 150;
     const wB = nodeB.width || 350; const hB = nodeB.height || 150;
 
-    const sourceHandles = [
-        { side: 'right', x: nodeA.position.x + wA, y: nodeA.position.y + hA / 2 },
-        { side: 'bottom', x: nodeA.position.x + wA / 2, y: nodeA.position.y + hA }
-    ];
+    const cxA = nodeA.position.x + wA / 2;
+    const cyA = nodeA.position.y + hA / 2;
+    const cxB = nodeB.position.x + wB / 2;
+    const cyB = nodeB.position.y + hB / 2;
 
-    const targetHandles = [
-        { side: 'left', x: nodeB.position.x, y: nodeB.position.y + hB / 2 },
-        { side: 'top', x: nodeB.position.x + wB / 2, y: nodeB.position.y }
-    ];
+    const dx = cxB - cxA;
+    const dy = cyB - cyA;
 
-    let minDist = Infinity;
-    let optimal = ['right', 'left'];
-
-    sourceHandles.forEach(s => {
-        targetHandles.forEach(t => {
-            const dist = Math.pow(s.x - t.x, 2) + Math.pow(s.y - t.y, 2);
-            if (dist < minDist) {
-                minDist = dist;
-                optimal = [s.side, t.side];
-            }
-        });
-    });
-
-    return optimal;
+    if (Math.abs(dx) > Math.abs(dy)) {
+        return dx > 0 ? ['right', 'left'] : ['left', 'right'];
+    } else {
+        return dy > 0 ? ['bottom', 'top'] : ['top', 'bottom'];
+    }
 };
 
 export const useStore = create((set, get) => ({
@@ -167,12 +156,21 @@ export const useStore = create((set, get) => ({
         // Prevent self connection
         if (connection.source === connection.target) return;
 
-        // Output card can only have one connection
+        // Two cards can only be connected once
+        const alreadyConnected = get().edges.some(e => 
+            (e.source === connection.source && e.target === connection.target) || 
+            (e.source === connection.target && e.target === connection.source)
+        );
+        if (alreadyConnected) return;
+
+        // Output card can only have one connection total
+        const sourceNode = get().nodes.find(n => n.id === connection.source);
         const targetNode = get().nodes.find(n => n.id === connection.target);
-        if (targetNode && targetNode.type === 'customOutput') {
-            const hasIncoming = get().edges.some(e => e.target === connection.target);
-            if (hasIncoming) return;
-        }
+        
+        const isOutputConnected = (nodeId) => get().edges.some(e => e.source === nodeId || e.target === nodeId);
+        
+        if (sourceNode?.type === 'customOutput' && isOutputConnected(sourceNode.id)) return;
+        if (targetNode?.type === 'customOutput' && isOutputConnected(targetNode.id)) return;
 
         set({
             edges: addEdge({ 

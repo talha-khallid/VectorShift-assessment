@@ -7,6 +7,9 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
   const updateNodeField = useStore(state => state.updateNodeField);
   const edges = useStore(state => state.edges);
 
+  const isOutputNode = id.includes('customOutput') || data?.nodeType === 'customOutput';
+  const isOutputConnected = isOutputNode && edges.some(e => e.source === id || e.target === id);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
@@ -89,6 +92,10 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
             (e.target === id && e.targetHandle === `${id}-${side}-target`)
         );
 
+        if (isOutputConnected && !isConnected) {
+            return null;
+        }
+
         return (
           <div 
             key={side}
@@ -97,23 +104,16 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
               opacity: (hoverSide === side || isConnected) ? 1 : 0, 
             }}
           >
-          {/* Targets (Inputs) on Top and Left */}
-          {['top', 'left'].includes(side) && (
-            <Handle 
-              type="target" 
-              position={side === 'top' ? Position.Top : Position.Left} 
-              id={`${id}-${side}-target`} 
-            />
-          )}
-
-          {/* Sources (Outputs) on Bottom and Right */}
-          {['bottom', 'right'].includes(side) && (
-            <Handle 
-              type="source" 
-              position={side === 'bottom' ? Position.Bottom : Position.Right} 
-              id={`${id}-${side}-source`} 
-            />
-          )}
+          <Handle 
+            type="target" 
+            position={side === 'top' ? Position.Top : side === 'bottom' ? Position.Bottom : side === 'left' ? Position.Left : Position.Right} 
+            id={`${id}-${side}-target`} 
+          />
+          <Handle 
+            type="source" 
+            position={side === 'top' ? Position.Top : side === 'bottom' ? Position.Bottom : side === 'left' ? Position.Left : Position.Right} 
+            id={`${id}-${side}-source`} 
+          />
         </div>
         );
       })}
