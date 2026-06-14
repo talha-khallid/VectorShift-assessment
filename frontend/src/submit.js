@@ -30,31 +30,5 @@ export const SubmitButton = () => {
         }
     };
 
-    return (
-        <button 
-            onClick={handleSubmit}
-            style={{
-                backgroundColor: '#1C2536',
-                color: 'white',
-                border: 'none',
-                padding: '10px 24px',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                transition: 'all 0.2s ease',
-            }}
-            onMouseOver={(e) => {
-                e.target.style.backgroundColor = '#2d3b54';
-                e.target.style.transform = 'translateY(-1px)';
-            }}
-            onMouseOut={(e) => {
-                e.target.style.backgroundColor = '#1C2536';
-                e.target.style.transform = 'translateY(0)';
-            }}
-        >
-            Submit Pipeline
-        </button>
-    );
+   
 };
