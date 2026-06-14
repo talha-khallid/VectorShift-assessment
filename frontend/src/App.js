@@ -1,6 +1,6 @@
 import { PipelineToolbar } from './toolbar';  
 import { PipelineUI } from './ui';  
-import { SubmitButton } from './submit';
+import { ResultPanel } from './ResultPanel';
 import { ReactFlowProvider } from 'reactflow';  
   
 function App() {  
@@ -9,9 +9,7 @@ function App() {
       <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>  
         <PipelineUI />  
         <PipelineToolbar />  
-        <div style={{ position: 'absolute', top: '24px', right: '24px', zIndex: 1000 }}>
-          <SubmitButton />
-        </div>
+        <ResultPanel />
       </div>  
     </ReactFlowProvider>  
   );  

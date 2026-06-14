@@ -29,6 +29,12 @@ export const useStore = create((set, get) => ({
     nodes: [],
     edges: [],
     connectingHandle: null,
+    workflowResult: null,
+    isExecuting: false,
+    
+    setWorkflowResult: (result) => set({ workflowResult: result }),
+    setIsExecuting: (status) => set({ isExecuting: status }),
+
     nodeIDs: {},
     isLocked: false,
     past: [],

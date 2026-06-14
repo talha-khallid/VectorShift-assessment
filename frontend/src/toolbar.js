@@ -15,6 +15,11 @@ const selector = (state) => ({
     redo: state.redo,
     isLocked: state.isLocked,
     toggleLock: state.toggleLock,
+    nodes: state.nodes,
+    edges: state.edges,
+    isExecuting: state.isExecuting,
+    setIsExecuting: state.setIsExecuting,
+    setWorkflowResult: state.setWorkflowResult,
 });
 
 export const PipelineToolbar = () => {
@@ -31,7 +36,12 @@ export const PipelineToolbar = () => {
         undo, 
         redo,
         isLocked,
-        toggleLock
+        toggleLock,
+        nodes,
+        edges,
+        isExecuting,
+        setIsExecuting,
+        setWorkflowResult
     } = useStore(selector, shallow);
     
     const { zoomIn, zoomOut, fitView, project } = useReactFlow();
@@ -80,6 +90,28 @@ export const PipelineToolbar = () => {
             data: { id: nodeID, nodeType: `${type}` },
         };
         addNode(newNode);
+    };
+
+    const outputNode = nodes.find(n => n.type === 'customOutput');
+    const isOutputConnected = outputNode && edges.some(e => e.source === outputNode.id || e.target === outputNode.id);
+
+    const runWorkflow = async () => {
+        setIsExecuting(true);
+        setWorkflowResult(null);
+        try {
+            const response = await fetch('http://localhost:8000/pipelines/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nodes, edges }),
+            });
+            const data = await response.json();
+            setWorkflowResult(data.result);
+        } catch (error) {
+            console.error(error);
+            setWorkflowResult("Error executing workflow. Is the backend running?");
+        } finally {
+            setIsExecuting(false);
+        }
     };
 
     return (
@@ -203,6 +235,22 @@ export const PipelineToolbar = () => {
                     </svg>
                 )}
             </button>
+
+            {isOutputConnected && (
+                <button 
+                    className="toolbar-btn primary" 
+                    onClick={runWorkflow}
+                    disabled={isExecuting}
+                    style={{ marginLeft: '14px', backgroundColor: '#10b981', color: 'white' }}
+                >
+                    {isExecuting ? 'Running...' : 'Run Workflow'}
+                    {!isExecuting && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '6px' }}>
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    )}
+                </button>
+            )}
         </div>
     );
 };

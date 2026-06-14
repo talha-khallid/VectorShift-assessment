@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { BaseNode } from './BaseNode';
+import { useStore } from '../store';
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '');
+  const updateNodeField = useStore(state => state.updateNodeField);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -14,6 +16,7 @@ export const TextNode = ({ id, data }) => {
 
   const handleTextChange = (e) => {
     setCurrText(e.target.value);
+    updateNodeField(id, 'text', e.target.value);
   };
 
   return (

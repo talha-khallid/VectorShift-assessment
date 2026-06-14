@@ -1,17 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { BaseNode } from './BaseNode';
+import { useStore } from '../store';
 
 export const LLMNode = ({ id, data }) => {
-  const [model, setModel] = useState(data?.model || 'gpt-4');
+  const [model, setModel] = useState(data?.model || 'deepseek-v4');
   const [prompt, setPrompt] = useState(data?.prompt || '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const updateNodeField = useStore(state => state.updateNodeField);
   const textareaRef = useRef(null);
 
   const models = [
-    { value: 'gpt-4', label: 'GPT-4' },
-    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
-    { value: 'claude-3-opus', label: 'Claude 3 Opus' },
-    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+    { value: 'deepseek-v4', label: 'DeepSeek V4' },
+    { value: 'deepseek-flash', label: 'DeepSeek Flash' },
   ];
 
   useEffect(() => {
@@ -39,6 +39,7 @@ export const LLMNode = ({ id, data }) => {
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
+    updateNodeField(id, 'prompt', e.target.value);
   };
 
   return (
@@ -60,7 +61,11 @@ export const LLMNode = ({ id, data }) => {
                 <div 
                   key={m.value}
                   className={`custom-dropdown-item ${m.value === model ? 'selected' : ''}`}
-                  onClick={() => { setModel(m.value); setIsDropdownOpen(false); }}
+                  onClick={() => { 
+                      setModel(m.value); 
+                      updateNodeField(id, 'model', m.value);
+                      setIsDropdownOpen(false); 
+                  }}
                 >
                   {m.label}
                 </div>
