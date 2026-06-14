@@ -1,29 +1,28 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { BaseNode } from './BaseNode';
-import { useStore } from '../store';
-import { Position } from 'reactflow';
 
 export const OutputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
-  const [outputType, setOutputType] = useState(data?.outputType || 'Text');
-  const updateNodeField = useStore((state) => state.updateNodeField);
+  const [currName, setCurrName] = useState(data?.outputName || '');
+  const [outputVal, setOutputVal] = useState(data?.outputVal || '');
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [outputVal]);
 
   const handleNameChange = (e) => {
-    const value = e.target.value;
-    setCurrName(value);
-    updateNodeField(id, 'outputName', value);
+    setCurrName(e.target.value);
   };
 
-  const handleTypeChange = (e) => {
-    const value = e.target.value;
-    setOutputType(value);
-    updateNodeField(id, 'outputType', value);
+  const handleOutputValChange = (e) => {
+    setOutputVal(e.target.value);
   };
-
-  const inputs = [{ id: 'value', position: Position.Left }];
 
   return (
-    <BaseNode id={id} inputs={inputs}>
+    <BaseNode id={id}>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -33,22 +32,27 @@ export const OutputNode = ({ id, data }) => {
         <span>Output</span>
       </div>
       <div className="custom-node-body nodrag">
-        <label className="custom-node-label">
+        <label className="custom-node-label" style={{ display: 'block' }}>
           Name
           <input 
             type="text" 
             value={currName} 
             onChange={handleNameChange} 
             className="custom-node-input"
+            placeholder="Output name..."
             style={{ marginTop: '6px' }}
           />
         </label>
-        <label className="custom-node-label" style={{ marginTop: '8px', display: 'block' }}>
-          Type
-          <select value={outputType} onChange={handleTypeChange} className="custom-node-select" style={{ marginTop: '6px' }}>
-            <option value="Text">Text</option>
-            <option value="Image">Image</option>
-          </select>
+        <label className="custom-node-label" style={{ marginTop: '10px', display: 'block' }}>
+          Response
+          <textarea 
+            ref={textareaRef}
+            value={outputVal} 
+            onChange={handleOutputValChange} 
+            className="custom-node-textarea"
+            placeholder="Output response..."
+            style={{ marginTop: '6px', minHeight: '60px', overflow: 'hidden' }}
+          />
         </label>
       </div>
     </BaseNode>

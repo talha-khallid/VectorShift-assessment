@@ -175,46 +175,40 @@ code {
 /* Node Styles */
 .custom-node {
     position: relative;
-    background-color: #f3f4f6;
-    border-radius: 12px;
-    width: 250px;
+    background-color: white;
+    border-radius: 20px;
+    width: 350px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0,0,0,0.04);
     box-sizing: border-box;
-    padding: 1px;
+    padding: 2px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: #1a1a1a;
-    border: 2px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-
-.custom-node:hover {
-    border-color: #1C2536;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .custom-node-header {
+    background-color: white;
+    border-radius: 20px 20px 0 0;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
+    gap: 8px;
+    padding: 14px 16px 10px 16px;
     font-weight: 600;
-    font-size: 16px;
-    color: #1C2536;
+    font-size: 18px;
 }
 
 .custom-node-body {
-    background-color: white;
-    border-radius: 10px;
-    padding: 12px;
-    margin: 0 4px 4px 4px;
+    background-color: #f9fafb;
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 6px 6px 6px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .custom-node-label {
-    font-size: 12px;
-    color: #4b5563;
+    font-size: 14px;
+    color: #1a1a1a;
     font-weight: 500;
 }
 
@@ -222,15 +216,15 @@ code {
 .custom-node-select,
 .custom-node-textarea {
     width: 100%;
-    background-color: #f9fafb;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 13px;
+    background-color: #f3f4f6;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
     color: #1a1a1a;
     box-sizing: border-box;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s;
     font-family: inherit;
     resize: none;
 }
@@ -238,9 +232,7 @@ code {
 .custom-node-input:focus,
 .custom-node-select:focus,
 .custom-node-textarea:focus {
-    border-color: #1C2536;
-    background-color: #fff;
-    box-shadow: 0 0 0 2px rgba(28, 37, 54, 0.1);
+    border-color: #d1d5db;
 }
 
 .handle-wrapper {

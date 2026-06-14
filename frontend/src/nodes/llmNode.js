@@ -1,17 +1,28 @@
+import { useState, useRef, useEffect } from 'react';
 import { BaseNode } from './BaseNode';
-import { Position } from 'reactflow';
 
 export const LLMNode = ({ id, data }) => {
-  const inputs = [
-    { id: 'system', position: Position.Left, style: { top: '33%' }, label: 'system' },
-    { id: 'prompt', position: Position.Left, style: { top: '66%' }, label: 'prompt' },
-  ];
-  const outputs = [
-    { id: 'response', position: Position.Right, label: 'response' },
-  ];
+  const [model, setModel] = useState(data?.model || 'gpt-4');
+  const [prompt, setPrompt] = useState(data?.prompt || '');
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [prompt]);
+
+  const handleModelChange = (e) => {
+    setModel(e.target.value);
+  };
+
+  const handlePromptChange = (e) => {
+    setPrompt(e.target.value);
+  };
 
   return (
-    <BaseNode id={id} inputs={inputs} outputs={outputs}>
+    <BaseNode id={id}>
       <div className="custom-node-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
@@ -21,8 +32,27 @@ export const LLMNode = ({ id, data }) => {
         </svg>
         <span>LLM</span>
       </div>
-      <div className="custom-node-body nodrag" style={{ minHeight: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: '14px', color: '#666' }}>This is a LLM node.</span>
+      <div className="custom-node-body nodrag">
+        <label className="custom-node-label" style={{ display: 'block' }}>
+          Model
+          <select value={model} onChange={handleModelChange} className="custom-node-select" style={{ marginTop: '6px' }}>
+            <option value="gpt-4">GPT-4</option>
+            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            <option value="claude-3-opus">Claude 3 Opus</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          </select>
+        </label>
+        <label className="custom-node-label" style={{ marginTop: '10px', display: 'block' }}>
+          Prompt
+          <textarea 
+            ref={textareaRef}
+            value={prompt} 
+            onChange={handlePromptChange} 
+            className="custom-node-textarea"
+            placeholder="Enter prompt..."
+            style={{ marginTop: '6px', minHeight: '60px', overflow: 'hidden' }}
+          />
+        </label>
       </div>
     </BaseNode>
   );
