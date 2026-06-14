@@ -6,7 +6,6 @@ import { useState, useRef, useCallback } from 'react';
 import ReactFlow, { Background } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
-import { InputNode } from './nodes/inputNode';
 import { LLMNode } from './nodes/llmNode';
 import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
@@ -18,7 +17,6 @@ import 'reactflow/dist/style.css';
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
 const nodeTypes = {  
-  customInput: InputNode,  
   llm: LLMNode,  
   customOutput: OutputNode,  
   text: TextNode,  
