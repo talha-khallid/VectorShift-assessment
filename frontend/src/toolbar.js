@@ -238,14 +238,13 @@ export const PipelineToolbar = () => {
 
             {isOutputConnected && (
                 <button 
-                    className="toolbar-btn primary" 
+                    className="toolbar-btn run-workflow-btn" 
                     onClick={runWorkflow}
                     disabled={isExecuting}
-                    style={{ marginLeft: '14px', backgroundColor: '#10b981', color: 'white' }}
                 >
                     {isExecuting ? 'Running...' : 'Run Workflow'}
                     {!isExecuting && (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '6px' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
                     )}

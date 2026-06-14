@@ -60,6 +60,23 @@ code {
     padding: 0;
 }
 
+.toolbar-btn.run-workflow-btn {
+    width: auto;
+    padding: 0 16px;
+    background-color: #1C2536;
+    color: white;
+    border-radius: 22px;
+    font-weight: 500;
+    font-size: 14px;
+    gap: 8px;
+    margin-left: 14px;
+    box-shadow: none;
+}
+
+.toolbar-btn.run-workflow-btn:hover:not(:disabled) {
+    background-color: #2a374f;
+}
+
 .toolbar-btn.primary:hover {
     background-color: #2d3b54;
 }
