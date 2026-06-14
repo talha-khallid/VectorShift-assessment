@@ -114,6 +114,7 @@ export const PipelineUI = () => {
                 connectionLineStyle={{ stroke: '#1a1a1a', strokeWidth: 3 }}
                 connectionLineType="default"
                 connectionMode="loose"
+                deleteKeyCode={null}
             >
                 <Background color="#aaa" gap={gridSize} />
             </ReactFlow>

@@ -94,11 +94,8 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
             (e.target === id && e.targetHandle === `${id}-${side}-target`)
         );
 
-        if (isOutputConnected && !isConnected) {
-            return null;
-        }
-
         const isConnecting = connectingHandle === `${id}-${side}-source` || connectingHandle === `${id}-${side}-target`;
+        const isHiddenOutputHandle = isOutputConnected && !isConnected;
 
         return (
           <div 
@@ -108,7 +105,8 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
                 if (isConnected) disconnectNodeSide(id, side);
             }}
             style={{ 
-              opacity: (hoverSide === side || isConnected || isConnecting) ? 1 : 0, 
+              opacity: isHiddenOutputHandle ? 0 : (hoverSide === side || isConnected || isConnecting) ? 1 : 0,
+              pointerEvents: isHiddenOutputHandle ? 'none' : 'auto'
             }}
           >
           <Handle 
