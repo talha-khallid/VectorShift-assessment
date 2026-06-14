@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useStore } from '../store';
+import { useStore } from '../../store/store';
 import { Clock, Database } from 'lucide-react';
 
 export const HistorySidebar = () => {

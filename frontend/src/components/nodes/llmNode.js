@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { BaseNode } from './BaseNode';
-import { useStore } from '../store';
+import { useStore } from '../../store/store';
 
 export const LLMNode = ({ id, data }) => {
   const [model, setModel] = useState(data?.model || 'deepseek-v4');

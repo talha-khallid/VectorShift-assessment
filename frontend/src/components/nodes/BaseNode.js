@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useStore } from '../store';
+import { useStore } from '../../store/store';
 import { Handle, Position } from 'reactflow';
 
 export const BaseNode = ({ id, data, defaultTitle, children }) => {

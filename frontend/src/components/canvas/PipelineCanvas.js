@@ -4,11 +4,11 @@
 
 import { useState, useRef, useCallback } from 'react';
 import ReactFlow, { Background } from 'reactflow';
-import { useStore } from './store';
+import { useStore } from '../../store/store';
 import { shallow } from 'zustand/shallow';
-import { LLMNode } from './nodes/llmNode';
-import { OutputNode } from './nodes/outputNode';
-import { TextNode } from './nodes/textNode';
+import { LLMNode } from '../nodes/llmNode';
+import { OutputNode } from '../nodes/outputNode';
+import { TextNode } from '../nodes/textNode';
 import 'reactflow/dist/style.css';
 
 const gridSize = 20;

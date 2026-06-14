@@ -1,7 +1,7 @@
 // toolbar.js
 
 import { useState, useRef, useEffect } from 'react';
-import { useStore } from './store';
+import { useStore } from '../../store/store';
 import { shallow } from 'zustand/shallow';
 import { useReactFlow, useViewport } from 'reactflow';
 

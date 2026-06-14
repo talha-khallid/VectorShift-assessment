@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useStore } from '../store';
-import { PipelineToolbar } from '../toolbar';  
-import { PipelineUI } from '../ui';  
-import { ResultPanel } from '../ResultPanel';
-import { HistorySidebar } from '../components/HistorySidebar';
+import { useStore } from '../store/store';
+import { PipelineToolbar } from '../components/ui/PipelineToolbar';  
+import { PipelineUI } from '../components/canvas/PipelineCanvas';  
+import { ResultPanel } from '../components/ui/ResultPanel';
+import { HistorySidebar } from '../components/ui/HistorySidebar';
 import { ReactFlowProvider } from 'reactflow';  
 import { ArrowLeft } from 'lucide-react';
 
