@@ -6,6 +6,8 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
   const deleteNode = useStore(state => state.deleteNode);
   const updateNodeField = useStore(state => state.updateNodeField);
   const edges = useStore(state => state.edges);
+  const disconnectNodeSide = useStore(state => state.disconnectNodeSide);
+  const connectingHandle = useStore(state => state.connectingHandle);
 
   const isOutputNode = id.includes('customOutput') || data?.nodeType === 'customOutput';
   const isOutputConnected = isOutputNode && edges.some(e => e.source === id || e.target === id);
@@ -96,12 +98,17 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
             return null;
         }
 
+        const isConnecting = connectingHandle === `${id}-${side}-source` || connectingHandle === `${id}-${side}-target`;
+
         return (
           <div 
             key={side}
-            className={`hover-dot-wrapper ${side} nodrag`}
+            className={`hover-dot-wrapper ${side} nodrag ${isConnected ? 'is-connected' : ''}`}
+            onClick={() => {
+                if (isConnected) disconnectNodeSide(id, side);
+            }}
             style={{ 
-              opacity: (hoverSide === side || isConnected) ? 1 : 0, 
+              opacity: (hoverSide === side || isConnected || isConnecting) ? 1 : 0, 
             }}
           >
           <Handle 

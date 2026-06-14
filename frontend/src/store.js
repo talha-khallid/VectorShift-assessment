@@ -28,10 +28,13 @@ const getOptimalHandles = (nodeA, nodeB) => {
 export const useStore = create((set, get) => ({
     nodes: [],
     edges: [],
+    connectingHandle: null,
     nodeIDs: {},
     isLocked: false,
     past: [],
     future: [],
+
+    setConnectingHandle: (handleId) => set({ connectingHandle: handleId }),
 
     saveHistory: () => {
         set(state => {
@@ -176,7 +179,7 @@ export const useStore = create((set, get) => ({
             edges: addEdge({ 
                 ...connection, 
                 type: 'default',
-                style: { strokeWidth: 3, stroke: '#1a1a1a' } 
+                style: { strokeWidth: 3, stroke: '#1a1a1a', zIndex: 11 } 
             }, get().edges),
         });
     },
@@ -185,6 +188,16 @@ export const useStore = create((set, get) => ({
         get().saveHistory();
         set({
             edges: get().edges.filter(e => e.source !== nodeId && e.target !== nodeId),
+        });
+    },
+
+    disconnectNodeSide: (nodeId, side) => {
+        get().saveHistory();
+        set({
+            edges: get().edges.filter(e => 
+                !(e.source === nodeId && e.sourceHandle === `${nodeId}-${side}-source`) &&
+                !(e.target === nodeId && e.targetHandle === `${nodeId}-${side}-target`)
+            ),
         });
     },
 

@@ -100,6 +100,8 @@ export const PipelineUI = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                onConnectStart={(_, { handleId }) => useStore.getState().setConnectingHandle(handleId)}
+                onConnectEnd={() => useStore.getState().setConnectingHandle(null)}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onNodeDragStop={onNodeDragStop}
