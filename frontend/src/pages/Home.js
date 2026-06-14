@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Folder } from 'lucide-react';
+import { Plus, Folder, Trash2 } from 'lucide-react';
 
 export const Home = () => {
     const [workflows, setWorkflows] = useState([]);
@@ -24,6 +24,17 @@ export const Home = () => {
             navigate(`/workflow/${data.id}`);
         } catch (err) {
             console.error("Failed to create workflow", err);
+        }
+    };
+
+    const deleteWorkflow = async (e, id) => {
+        e.stopPropagation();
+        if (!window.confirm("Are you sure you want to delete this workflow?")) return;
+        try {
+            await fetch(`http://localhost:8000/workflows/${id}`, { method: 'DELETE' });
+            setWorkflows(workflows.filter(w => w.id !== id));
+        } catch (err) {
+            console.error("Failed to delete workflow", err);
         }
     };
 
@@ -55,6 +66,13 @@ export const Home = () => {
                                 <h3>{wf.name}</h3>
                                 <span>Updated: {new Date(wf.updated_at).toLocaleDateString()}</span>
                             </div>
+                            <button 
+                                className="delete-workflow-btn" 
+                                onClick={(e) => deleteWorkflow(e, wf.id)}
+                                title="Delete Workflow"
+                            >
+                                <Trash2 size={16} />
+                            </button>
                         </div>
                     ))
                 )}

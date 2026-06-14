@@ -633,6 +633,30 @@ code {
     color: #6b7280;
 }
 
+.delete-workflow-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.workflow-card:hover .delete-workflow-btn {
+    opacity: 1;
+}
+
+.delete-workflow-btn:hover {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
 .empty-state {
     grid-column: 1 / -1;
     display: flex;

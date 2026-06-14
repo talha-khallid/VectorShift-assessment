@@ -112,6 +112,16 @@ async def save_workflow(workflow_id: int, payload: WorkflowPayload):
     conn.close()
     return {"status": "saved"}
 
+@app.delete('/workflows/{workflow_id}')
+async def delete_workflow(workflow_id: int):
+    conn = sqlite3.connect('workflow.db')
+    c = conn.cursor()
+    c.execute("DELETE FROM workflows WHERE id = ?", (workflow_id,))
+    c.execute("DELETE FROM executions WHERE workflow_id = ?", (workflow_id,))
+    conn.commit()
+    conn.close()
+    return {"status": "deleted"}
+
 @app.get('/workflows/{workflow_id}/executions')
 async def get_executions(workflow_id: int):
     conn = sqlite3.connect('workflow.db')
