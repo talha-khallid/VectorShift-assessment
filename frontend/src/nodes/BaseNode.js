@@ -8,7 +8,9 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
+  const [hoverSide, setHoverSide] = useState(null);
   const menuRef = useRef(null);
+  const nodeRef = useRef(null);
 
   const title = data?.customName || defaultTitle || 'Node';
 
@@ -46,8 +48,44 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
     setIsEditing(false);
   };
 
+  const handleMouseMove = (e) => {
+    if (!nodeRef.current) return;
+    const rect = nodeRef.current.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    const distLeft = Math.abs(x - rect.left);
+    const distRight = Math.abs(rect.right - x);
+    const distTop = Math.abs(y - rect.top);
+    const distBottom = Math.abs(rect.bottom - y);
+
+    const min = Math.min(distLeft, distRight, distTop, distBottom);
+    
+    let side = null;
+    if (min === distLeft) side = 'left';
+    else if (min === distRight) side = 'right';
+    else if (min === distTop) side = 'top';
+    else if (min === distBottom) side = 'bottom';
+
+    setHoverSide(side);
+  };
+
+  const handleMouseLeave = () => {
+    setHoverSide(null);
+  };
+
   return (
-    <div className="custom-node">
+    <div 
+      className="custom-node" 
+      ref={nodeRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {hoverSide && (
+        <div className={`hover-dot-wrapper ${hoverSide}`}>
+          <button className="hover-dot-btn" />
+        </div>
+      )}
       <div className="custom-node-header">
         {isEditing ? (
           <div className="node-rename-container nodrag">

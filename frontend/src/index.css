@@ -185,6 +185,66 @@ code {
     color: #1a1a1a;
 }
 
+/* Expand hover area by 25px around the card */
+.custom-node::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    right: -40px;
+    bottom: -40px;
+    z-index: -1;
+}
+
+/* Hover Dot */
+.hover-dot-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.hover-dot-wrapper.top {
+    top: -25px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+}
+
+.hover-dot-wrapper.bottom {
+    bottom: -25px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+}
+
+.hover-dot-wrapper.left {
+    left: -25px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+}
+
+.hover-dot-wrapper.right {
+    right: -25px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+}
+
+.hover-dot-btn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #868686;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+
 .custom-node-header {
     background-color: white;
     border-radius: 20px 20px 0 0;
@@ -294,10 +354,6 @@ code {
     outline: none;
     color: #1a1a1a;
     width: 100%;
-}
-
-.node-rename-input:focus {
-    /* No border on focus */
 }
 
 .node-rename-actions {
