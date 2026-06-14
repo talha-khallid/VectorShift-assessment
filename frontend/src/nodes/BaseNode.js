@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useStore } from '../store';
+import { Handle, Position } from 'reactflow';
 
 export const BaseNode = ({ id, data, defaultTitle, children }) => {
   const deleteNode = useStore(state => state.deleteNode);
   const updateNodeField = useStore(state => state.updateNodeField);
+  const edges = useStore(state => state.edges);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -81,11 +83,40 @@ export const BaseNode = ({ id, data, defaultTitle, children }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {hoverSide && (
-        <div className={`hover-dot-wrapper ${hoverSide}`}>
-          <button className="hover-dot-btn" />
+      {['top', 'bottom', 'left', 'right'].map(side => {
+        const isConnected = edges.some(e => 
+            (e.source === id && e.sourceHandle === `${id}-${side}-source`) || 
+            (e.target === id && e.targetHandle === `${id}-${side}-target`)
+        );
+
+        return (
+          <div 
+            key={side}
+            className={`hover-dot-wrapper ${side} nodrag`}
+            style={{ 
+              opacity: (hoverSide === side || isConnected) ? 1 : 0, 
+            }}
+          >
+          {/* Targets (Inputs) on Top and Left */}
+          {['top', 'left'].includes(side) && (
+            <Handle 
+              type="target" 
+              position={side === 'top' ? Position.Top : Position.Left} 
+              id={`${id}-${side}-target`} 
+            />
+          )}
+
+          {/* Sources (Outputs) on Bottom and Right */}
+          {['bottom', 'right'].includes(side) && (
+            <Handle 
+              type="source" 
+              position={side === 'bottom' ? Position.Bottom : Position.Right} 
+              id={`${id}-${side}-source`} 
+            />
+          )}
         </div>
-      )}
+        );
+      })}
       <div className="custom-node-header">
         {isEditing ? (
           <div className="node-rename-container nodrag">

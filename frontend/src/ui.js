@@ -96,7 +96,10 @@ export const PipelineUI = () => {
         <div ref={reactFlowWrapper} style={{width: '100vw', height: '100vh'}}>
             <ReactFlow
                 nodes={nodes}
+                edges={edges}
                 onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onNodeDragStop={onNodeDragStop}
@@ -105,8 +108,10 @@ export const PipelineUI = () => {
                 proOptions={proOptions}
                 snapGrid={[gridSize, gridSize]}
                 nodesDraggable={!isLocked}
-                nodesConnectable={false}
                 elementsSelectable={!isLocked}
+                connectionLineStyle={{ stroke: '#1a1a1a', strokeWidth: 3 }}
+                connectionLineType="default"
+                connectionMode="loose"
             >
                 <Background color="#aaa" gap={gridSize} />
             </ReactFlow>

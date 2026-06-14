@@ -3,7 +3,38 @@ import {
     applyNodeChanges,
     applyEdgeChanges,
     addEdge,
+    MarkerType,
 } from 'reactflow';
+
+const getOptimalHandles = (nodeA, nodeB) => {
+    const wA = nodeA.width || 350; const hA = nodeA.height || 150;
+    const wB = nodeB.width || 350; const hB = nodeB.height || 150;
+
+    const sourceHandles = [
+        { side: 'right', x: nodeA.position.x + wA, y: nodeA.position.y + hA / 2 },
+        { side: 'bottom', x: nodeA.position.x + wA / 2, y: nodeA.position.y + hA }
+    ];
+
+    const targetHandles = [
+        { side: 'left', x: nodeB.position.x, y: nodeB.position.y + hB / 2 },
+        { side: 'top', x: nodeB.position.x + wB / 2, y: nodeB.position.y }
+    ];
+
+    let minDist = Infinity;
+    let optimal = ['right', 'left'];
+
+    sourceHandles.forEach(s => {
+        targetHandles.forEach(t => {
+            const dist = Math.pow(s.x - t.x, 2) + Math.pow(s.y - t.y, 2);
+            if (dist < minDist) {
+                minDist = dist;
+                optimal = [s.side, t.side];
+            }
+        });
+    });
+
+    return optimal;
+};
 
 export const useStore = create((set, get) => ({
     nodes: [],
@@ -75,8 +106,30 @@ export const useStore = create((set, get) => ({
         if (hasRemove) {
             get().saveHistory();
         }
+        
+        const newNodes = applyNodeChanges(changes, get().nodes);
+        let newEdges = get().edges;
+
+        const positionChanges = changes.filter(c => c.type === 'position' && c.dragging);
+        if (positionChanges.length > 0) {
+            newEdges = newEdges.map(edge => {
+                const sourceNode = newNodes.find(n => n.id === edge.source);
+                const targetNode = newNodes.find(n => n.id === edge.target);
+                if (sourceNode && targetNode) {
+                    const [sourceSide, targetSide] = getOptimalHandles(sourceNode, targetNode);
+                    return {
+                        ...edge,
+                        sourceHandle: `${sourceNode.id}-${sourceSide}-source`,
+                        targetHandle: `${targetNode.id}-${targetSide}-target`
+                    };
+                }
+                return edge;
+            });
+        }
+
         set({
-            nodes: applyNodeChanges(changes, get().nodes),
+            nodes: newNodes,
+            edges: newEdges
         });
     },
 
@@ -110,8 +163,23 @@ export const useStore = create((set, get) => ({
 
     onConnect: (connection) => {
         get().saveHistory();
+        
+        // Prevent self connection
+        if (connection.source === connection.target) return;
+
+        // Output card can only have one connection
+        const targetNode = get().nodes.find(n => n.id === connection.target);
+        if (targetNode && targetNode.type === 'customOutput') {
+            const hasIncoming = get().edges.some(e => e.target === connection.target);
+            if (hasIncoming) return;
+        }
+
         set({
-            edges: addEdge({ ...connection, type: 'floating' }, get().edges),
+            edges: addEdge({ 
+                ...connection, 
+                type: 'default',
+                style: { strokeWidth: 3, stroke: '#1a1a1a' } 
+            }, get().edges),
         });
     },
 
