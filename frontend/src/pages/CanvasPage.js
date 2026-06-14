@@ -6,11 +6,12 @@ import { PipelineUI } from '../components/canvas/PipelineCanvas';
 import { ResultPanel } from '../components/ui/ResultPanel';
 import { HistorySidebar } from '../components/ui/HistorySidebar';
 import { ReactFlowProvider } from 'reactflow';  
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Menu, X } from 'lucide-react';
 
 export const CanvasPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
     const workflowId = useStore(state => state.workflowId);
     const setWorkflowId = useStore(state => state.setWorkflowId);
     const setNodes = useStore(state => state.setNodes);
@@ -59,15 +60,32 @@ export const CanvasPage = () => {
 
     return (
         <ReactFlowProvider>  
-            <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative', display: 'flex' }}>  
-                <HistorySidebar />
+            <div className="canvas-page-container" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative', display: 'flex' }}>  
+                <div className={`sidebar-wrapper ${isSidebarOpen ? 'open' : ''}`}>
+                    <HistorySidebar />
+                </div>
+                
+                {isSidebarOpen && (
+                    <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+                )}
+
                 <div style={{ flex: 1, position: 'relative' }}>
-                    <button 
-                        onClick={() => navigate('/')}
-                        style={{ position: 'absolute', top: 20, left: 20, zIndex: 1000, background: 'white', border: '1px solid #e5e7eb', padding: '8px 16px', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontWeight: 500 }}
-                    >
-                        <ArrowLeft size={16} /> Back to Dashboard
-                    </button>
+                    <div className="canvas-top-nav">
+                        <button 
+                            className="nav-btn"
+                            onClick={() => navigate('/')}
+                            title="Back to Dashboard"
+                        >
+                            <ArrowLeft size={16} /> <span className="hide-on-mobile">Back to Dashboard</span>
+                        </button>
+                        <button 
+                            className="nav-btn mobile-menu-btn"
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            title="Toggle History"
+                        >
+                            {isSidebarOpen ? <X size={16} /> : <Menu size={16} />}
+                        </button>
+                    </div>
                     <PipelineUI />  
                     <PipelineToolbar />  
                     <ResultPanel />

@@ -743,3 +743,116 @@ code {
     font-size: 13px;
     color: #9ca3af;
 }
+
+/* --- Mobile Responsiveness --- */
+
+.canvas-top-nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+}
+
+.nav-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #111827;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: background-color 0.2s;
+}
+
+.nav-btn:hover {
+    background-color: #f9fafb;
+}
+
+.sidebar-wrapper {
+    height: 100%;
+    z-index: 1500;
+    background: white;
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-btn {
+    display: none;
+    padding: 8px;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1400;
+}
+
+@media (max-width: 768px) {
+    /* Home Dashboard */
+    .home-dashboard {
+        padding: 20px;
+    }
+    .home-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .workflows-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Canvas Top Nav */
+    .canvas-top-nav {
+        top: 16px;
+        left: 16px;
+    }
+    .hide-on-mobile {
+        display: none;
+    }
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    /* History Sidebar Slide-in */
+    .sidebar-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+    }
+    .sidebar-wrapper.open {
+        transform: translateX(0);
+    }
+    .sidebar-overlay {
+        display: block;
+    }
+
+    /* Result Panel Full Width */
+    .result-panel-overlay {
+        width: 100%;
+    }
+
+    /* Toolbar Scaling */
+    .toolbar-container {
+        width: calc(100% - 32px);
+        bottom: 16px;
+        padding: 8px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .toolbar-btn.run-workflow-btn {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-top: 4px;
+    }
+}
