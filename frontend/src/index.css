@@ -197,13 +197,10 @@ code {
 }
 
 .custom-node-body {
-    background-color: #f9fafb;
-    border-radius: 14px;
-    padding: 14px;
-    margin: 0 6px 6px 6px;
+    padding: 0 14px 14px 14px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .custom-node-label {
