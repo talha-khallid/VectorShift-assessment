@@ -17,7 +17,7 @@ export const TextNode = ({ id, data }) => {
   };
 
   return (
-    <BaseNode id={id}>
+    <BaseNode id={id} outputs={[{ id: 'output' }]}>
       <div className="custom-node-header">
         <span>Input</span>
       </div>

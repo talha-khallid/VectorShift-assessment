@@ -22,7 +22,7 @@ export const OutputNode = ({ id, data }) => {
   };
 
   return (
-    <BaseNode id={id}>
+    <BaseNode id={id} inputs={[{ id: 'input', label: 'value' }]}>
       <div className="custom-node-header">
         <span>Output</span>
       </div>
