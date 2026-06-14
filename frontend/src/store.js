@@ -31,7 +31,9 @@ export const useStore = create((set, get) => ({
     connectingHandle: null,
     workflowResult: null,
     isExecuting: false,
+    workflowId: null,
     
+    setWorkflowId: (id) => set({ workflowId: id }),
     setWorkflowResult: (result) => set({ workflowResult: result }),
     setIsExecuting: (status) => set({ isExecuting: status }),
 
@@ -39,8 +41,24 @@ export const useStore = create((set, get) => ({
     isLocked: false,
     past: [],
     future: [],
-
     setConnectingHandle: (handleId) => set({ connectingHandle: handleId }),
+
+    setNodes: (nodes) => set({ nodes }),
+    setEdges: (edges) => set({ edges }),
+    
+    saveWorkflow: async () => {
+        const { workflowId, nodes, edges } = get();
+        if (!workflowId) return;
+        try {
+            await fetch(`http://localhost:8000/workflows/${workflowId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nodes, edges })
+            });
+        } catch (e) {
+            console.error("Auto-save failed", e);
+        }
+    },
 
     saveHistory: () => {
         set(state => {

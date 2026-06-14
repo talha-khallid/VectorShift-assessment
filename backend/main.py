@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import sqlite3
 import json
 import os
+from datetime import datetime
 
 # Load .env from the main dir
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
@@ -25,31 +26,105 @@ app.add_middleware(
 def init_db():
     conn = sqlite3.connect('workflow.db')
     c = conn.cursor()
+    
+    # Create workflows table
+    c.execute('''CREATE TABLE IF NOT EXISTS workflows 
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  name TEXT,
+                  nodes_data TEXT, 
+                  edges_data TEXT, 
+                  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+                  
+    # Create executions table
     c.execute('''CREATE TABLE IF NOT EXISTS executions 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  workflow_id INTEGER,
                   nodes_data TEXT, 
                   edges_data TEXT, 
                   result TEXT,
                   timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+                  
+    # Attempt to add workflow_id to existing executions table if it doesn't exist
+    try:
+        c.execute("ALTER TABLE executions ADD COLUMN workflow_id INTEGER")
+    except sqlite3.OperationalError:
+        pass # Column likely already exists
+        
     conn.commit()
     conn.close()
 
 init_db()
 
-@app.get('/')
-def read_root():
-    return {'Ping': 'Pong'}
-
-@app.post('/pipelines/parse')
-async def parse_pipeline(request: Request):
-    return {'status': 'parsed'}
-
 class WorkflowPayload(BaseModel):
+    workflow_id: Optional[int] = None
     nodes: List[Dict[str, Any]]
     edges: List[Dict[str, Any]]
 
+class WorkflowCreatePayload(BaseModel):
+    name: str
+
+@app.get('/workflows')
+async def get_workflows():
+    conn = sqlite3.connect('workflow.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT id, name, created_at, updated_at FROM workflows ORDER BY updated_at DESC")
+    rows = c.fetchall()
+    conn.close()
+    return [{"id": r["id"], "name": r["name"], "created_at": r["created_at"], "updated_at": r["updated_at"]} for r in rows]
+
+@app.post('/workflows')
+async def create_workflow(payload: WorkflowCreatePayload):
+    conn = sqlite3.connect('workflow.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO workflows (name, nodes_data, edges_data) VALUES (?, ?, ?)",
+              (payload.name, "[]", "[]"))
+    workflow_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    return {"id": workflow_id, "name": payload.name}
+
+@app.get('/workflows/{workflow_id}')
+async def get_workflow(workflow_id: int):
+    conn = sqlite3.connect('workflow.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM workflows WHERE id = ?", (workflow_id,))
+    row = c.fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "nodes": json.loads(row["nodes_data"] if row["nodes_data"] else "[]"),
+        "edges": json.loads(row["edges_data"] if row["edges_data"] else "[]")
+    }
+
+@app.put('/workflows/{workflow_id}')
+async def save_workflow(workflow_id: int, payload: WorkflowPayload):
+    conn = sqlite3.connect('workflow.db')
+    c = conn.cursor()
+    c.execute("UPDATE workflows SET nodes_data = ?, edges_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+              (json.dumps(payload.nodes), json.dumps(payload.edges), workflow_id))
+    conn.commit()
+    conn.close()
+    return {"status": "saved"}
+
+@app.get('/workflows/{workflow_id}/executions')
+async def get_executions(workflow_id: int):
+    conn = sqlite3.connect('workflow.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT id, result, timestamp FROM executions WHERE workflow_id = ? ORDER BY timestamp DESC", (workflow_id,))
+    rows = c.fetchall()
+    conn.close()
+    return [{"id": r["id"], "result": r["result"], "timestamp": r["timestamp"]} for r in rows]
+
 @app.post('/pipelines/execute')
 async def execute_pipeline(payload: WorkflowPayload):
+    workflow_id = payload.workflow_id
     nodes = payload.nodes
     edges = payload.edges
     
@@ -80,7 +155,6 @@ async def execute_pipeline(payload: WorkflowPayload):
         source_id = edge['source']
         source_node = next((n for n in nodes if n['id'] == source_id), None)
         if source_node and source_node['type'] == 'text':
-            # Get text from node data
             node_data = source_node.get('data', {})
             text_val = node_data.get('text', '')
             if text_val:
@@ -93,7 +167,6 @@ async def execute_pipeline(payload: WorkflowPayload):
     
     # 6. Build the LLM Messages
     combined_texts = "\n\n---\n\n".join([f"Text {i+1}:\n{text}" for i, text in enumerate(texts)])
-    
     system_content = f"{prompt}\n\nHere are the inputs:\n\n{combined_texts}"
     
     api_key = os.getenv("DEEPSEEK_API_KEY")
@@ -102,8 +175,7 @@ async def execute_pipeline(payload: WorkflowPayload):
     else:
         try:
             client = AsyncOpenAI(api_key=api_key, base_url="https://api.deepseek.com")
-            # Map frontend labels to valid DeepSeek API models
-            actual_model = "deepseek-chat" # Default
+            actual_model = "deepseek-chat"
             if model == 'deepseek-v4':
                 actual_model = "deepseek-chat"
             elif model == 'deepseek-flash':
@@ -120,8 +192,8 @@ async def execute_pipeline(payload: WorkflowPayload):
     # 7. Save to SQLite
     conn = sqlite3.connect('workflow.db')
     c = conn.cursor()
-    c.execute("INSERT INTO executions (nodes_data, edges_data, result) VALUES (?, ?, ?)",
-              (json.dumps(nodes), json.dumps(edges), result))
+    c.execute("INSERT INTO executions (workflow_id, nodes_data, edges_data, result) VALUES (?, ?, ?, ?)",
+              (workflow_id, json.dumps(nodes), json.dumps(edges), result))
     conn.commit()
     conn.close()
     

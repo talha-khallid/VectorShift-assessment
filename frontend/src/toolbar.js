@@ -20,6 +20,7 @@ const selector = (state) => ({
     isExecuting: state.isExecuting,
     setIsExecuting: state.setIsExecuting,
     setWorkflowResult: state.setWorkflowResult,
+    workflowId: state.workflowId,
 });
 
 export const PipelineToolbar = () => {
@@ -41,7 +42,8 @@ export const PipelineToolbar = () => {
         edges,
         isExecuting,
         setIsExecuting,
-        setWorkflowResult
+        setWorkflowResult,
+        workflowId
     } = useStore(selector, shallow);
     
     const { zoomIn, zoomOut, fitView, project } = useReactFlow();
@@ -102,7 +104,7 @@ export const PipelineToolbar = () => {
             const response = await fetch('http://localhost:8000/pipelines/execute', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nodes, edges }),
+                body: JSON.stringify({ workflow_id: workflowId, nodes, edges }),
             });
             const data = await response.json();
             setWorkflowResult(data.result);
